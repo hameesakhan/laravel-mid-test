@@ -22,7 +22,14 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-    private $userRepository;
+
+    /**
+     * The user repository instance.
+     *
+     * @var \App\Repositories\UserRepository
+     */
+    protected $userRepository;
+
     use RegistersUsers;
 
     /**
@@ -35,6 +42,7 @@ class RegisterController extends Controller
     /**
      * Create a new controller instance.
      *
+     * @param  \App\Repositories\UserRepository  $userRepository
      * @return void
      */
     public function __construct(UserRepository $userRepository)
