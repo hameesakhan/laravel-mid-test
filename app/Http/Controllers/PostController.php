@@ -2,84 +2,67 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        return view('post/index')->with('posts', Post::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
-        //
+        return view('post/create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        //
+        $post = new Post;
+        $post->fill($request->validated());
+
+        $post->featured_image = $request->file('featured_image')->storePublicly('post_images', ['disk' => 'public']);
+
+        $post->save();
+
+        return redirect()->back()->with('success', 'Post created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(Post $post)
     {
-        //
+        return view('post/show')->with('post', $post);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit(Post $post)
     {
-        //
+        return view('post/edit')->with('post', $post);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Post $post)
+
+    public function update(PostRequest $request, Post $post)
     {
-        //
+        $post->fill($request->validated());
+
+        if ($request->hasFile('featured_image')) {
+            $post->featured_image = $request->file('featured_image')->storePublicly('post_images', ['disk' => 'public']);
+        }
+
+        $post->save();
+
+        return redirect()->back()->with('success', 'Post updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Post  $post
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+
+        return redirect()->back()->with('success', 'Post deleted successfully!');
     }
 }
